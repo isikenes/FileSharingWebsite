@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="WeatherForecast.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FileSharingWebsite.Data\FileSharingWebsite.Data.csproj" />
+    <ProjectReference Include="..\FileSharingWebsite.Entities\FileSharingWebsite.Entities.csproj" />
+    <ProjectReference Include="..\FileSharingWebsite.Services\FileSharingWebsite.Services.csproj" />
+  </ItemGroup>
+
+</Project>

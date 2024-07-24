@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Data\**" />
+    <Compile Remove="Models\**" />
+    <Compile Remove="Services\**" />
+    <Content Remove="Data\**" />
+    <Content Remove="Models\**" />
+    <Content Remove="Services\**" />
+    <EmbeddedResource Remove="Data\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Data\**" />
+    <None Remove="Models\**" />
+    <None Remove="Services\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Views\Shared\_Layout.cshtml.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="DNTCaptcha.Core" Version="5.2.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.7" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
+    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
+    <PackageReference Include="MimeTypesMap" Version="1.0.8" />
+    <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\uploads\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FileSharingWebsite.Entities\FileSharingWebsite.Entities.csproj" />
+    <ProjectReference Include="..\FileSharingWebsite.Helpers\FileSharingWebsite.Helpers.csproj" />
+    <ProjectReference Include="..\FileSharingWebsite.Services\FileSharingWebsite.Services.csproj" />
+  </ItemGroup>
+
+</Project>

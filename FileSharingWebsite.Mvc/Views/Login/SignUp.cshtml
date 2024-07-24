@@ -1,0 +1,114 @@
+﻿@model SignUpViewModel
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-4 col-12 mt-5">
+            <form id="signupForm" method="post">
+                <h1 class="h3 mb-3 fw-normal">Sign up</h1>
+                <div class="text-danger" id="validationSummary"></div>
+                <div class="form-floating">
+                    <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" asp-for="Email" required>
+                    <label for="floatingInput">Email address</label>
+                </div>
+                <div class="form-floating my-1">
+                    <input type="password" class="form-control" id="floatingPassword" placeholder="Password" asp-for="Password" required>
+                    <label for="floatingPassword">Password</label>
+                </div>
+                <div class="form-floating mt-1 mb-3">
+                    <input type="password" class="form-control" id="floatingPassword1" placeholder="Re-EnterPassword" asp-for="RePassword" required>
+                    <label for="floatingPassword1">Re-enter Password</label>
+                </div>
+
+                <dnt-captcha asp-captcha-generator-max="999999"
+                             asp-captcha-generator-min="111111"
+                             asp-captcha-generator-language="English"
+                             asp-captcha-generator-display-mode="ShowDigits"
+                             asp-use-relative-urls="true"
+                             asp-placeholder="Verify you are a human"
+                             asp-validation-error-message="Please enter the security code."
+                             asp-font-name="Tahoma"
+                             asp-font-size="40"
+                             asp-fore-color="#333"
+                             asp-back-color="#ccc"
+                             asp-text-box-class="text-box form-control"
+                             asp-text-box-template="<span class='input-group-prepend'><span class='form-group-text'></span></span>{0}"
+                             asp-validation-message-class="text-danger"
+                             asp-refresh-button-class="fas fa-redo btn-sm"
+                             asp-use-noise="true" />
+
+                <button class="w-100 btn btn-lg btn-primary my-5" type="submit">Sign up</button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="verificationModal" tabindex="-1" aria-labelledby="verificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="verificationModalLabel">Enter Verification Code</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="verificationForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="verificationCode" placeholder="Enter verification code" required>
+                        <label for="verificationCode">Verification Code</label>
+                    </div>
+                    <button class="btn btn-success mt-3" type="submit">Verify</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            $.ajaxSetup({
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                }
+            });
+
+            $("#signupForm").on("submit", function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '@Url.Action("SignUp", "Login")',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            $("#verificationModal").modal('show');
+                        } else {
+                            $("#validationSummary").text(response.message);
+                        }
+                    }
+                });
+            });
+
+            $("#verificationForm").on("submit", function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '@Url.Action("VerifyCode", "Login")',
+                    method: 'POST',
+                    data: {
+                        code: $("#verificationCode").val(),
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            window.location.href = '@Url.Action("Login", "Login")';
+                        } else {
+                            alert("Invalid verification code.");
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

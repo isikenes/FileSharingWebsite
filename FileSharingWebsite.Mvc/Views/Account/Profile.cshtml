@@ -1,0 +1,192 @@
+﻿@using System.Security.Claims
+@model IEnumerable<Upload>
+
+<div class="container">
+    <div class="row">
+        <h5 class="display-5">My Profile</h5>
+        <p class="fs-4 my-2">Welcome @ViewBag.Email</p>
+        <div class="text-danger" asp-validation-summary="All"></div>
+        <div>
+            <button type="button" class="btn btn-warning m-2" data-bs-toggle="modal" data-bs-target="#changeEmailModal">
+                <i class="fa-solid fa-pen"></i> Change Email
+            </button>
+
+            <button type="button" class="btn btn-warning m-2" data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
+                <i class="fa-solid fa-arrow-rotate-left"></i> Reset Password
+            </button>
+
+            <button type="button" class="btn btn-danger m-2" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                <i class="fa-solid fa-user-slash"></i> Delete Account
+            </button>
+        </div>
+
+        <h5 class="display-5 mt-5">My uploads</h5>
+        @foreach (var upload in Model)
+        {
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="m-3 border border-dark d-flex flex-column align-items-center rounded py-3">
+                    <img src="~/img/cloud-server.png" height="100" width="100" />
+                    <p class="my-2 fw-semibold"><strong>File name: </strong> @upload.FileName</p>
+                    <a class="btn btn-primary my-2" asp-controller="Upload" asp-action="Index" asp-route-path="@upload.Path"><i class="fa-solid fa-magnifying-glass"></i> Details</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Change Email Modal -->
+<div class="modal fade" id="changeEmailModal" tabindex="-1" aria-labelledby="changeEmailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="changeEmailModalLabel">Change Email</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="changeEmailForm">
+                    @Html.AntiForgeryToken()
+                    <div class="alert alert-success d-none" id="changeEmailSuccess"></div>
+                    <div class="alert alert-danger d-none" id="changeEmailError"></div>
+                    <div class="form-group">
+                        <label for="newEmail">Type your new email:</label>
+                        <input type="email" class="form-control my-3" id="newEmail" name="newEmail" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="resetPasswordModalLabel">Reset Password</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="resetPasswordForm">
+                    @Html.AntiForgeryToken()
+                    <div class="alert alert-success d-none" id="resetPasswordSuccess"></div>
+                    <div class="alert alert-danger d-none" id="resetPasswordError"></div>
+                    <div class="form-group my-2">
+                        <label for="oldPassword">Current Password</label>
+                        <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
+                    </div>
+                    <div class="form-group my-2">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                    </div>
+                    <div class="form-group my-2">
+                        <label for="reNewPassword">Confirm New Password</label>
+                        <input type="password" class="form-control" id="reNewPassword" name="reNewPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary my-3">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteAccountModalLabel">Delete Account</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="Account" asp-action="DeleteAccount" method="post">
+                    @Html.AntiForgeryToken()
+                    <p>Are you sure you want to <strong>delete</strong> your account? All your uploads will be <strong>deleted</strong> too. This action cannot be undone.</p>
+                    <button type="submit" class="btn btn-danger">Delete Account</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $('#resetPasswordModal').on('shown.bs.modal', function () {
+            $('#resetPasswordSuccess').addClass('d-none').text('');
+            $('#resetPasswordError').addClass('d-none').text('');
+        });
+
+        $('#resetPasswordForm').on('submit', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ResetPassword", "Account")',
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        $('#resetPasswordSuccess').removeClass('d-none').text('Password reset successfully.');
+                        $('#resetPasswordError').addClass('d-none').text('');
+                        document.getElementById('resetPasswordForm').reset();
+
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        $('#resetPasswordSuccess').addClass('d-none');
+                        $('#resetPasswordError').removeClass("d-none").text(response.message);
+                    }
+                },
+                error: function (xhr) {
+                    var errors = JSON.parse(xhr.responseText).errors;
+                    var errorMessage = '';
+                    for (var error in errors) {
+                        errorMessage += errors[error] + '<br>';
+                    }
+                    $('#resetPasswordError').html(errorMessage);
+                }
+            });
+        });
+
+        $('#changeEmailModal').on('shown.bs.modal', function () {
+            $('#changeEmailSuccess').addClass('d-none').text('');
+            $('#changeEmailError').addClass('d-none').text('');
+        });
+
+        $('#changeEmailForm').on('submit', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ChangeEmail", "Account")',
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        $('#changeEmailSuccess').removeClass('d-none').text('Email changed successfully.');
+                        $('#changeEmailError').addClass('d-none').text('');
+                        document.getElementById('changeEmailForm').reset();
+
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        $('#changeEmailSuccess').addClass('d-none');
+                        $('#changeEmailError').removeClass("d-none").text(response.message);
+                    }
+                },
+                error: function (xhr) {
+                    var errors = JSON.parse(xhr.responseText).errors;
+                    var errorMessage = '';
+                    for (var error in errors) {
+                        errorMessage += errors[error] + '<br>';
+                    }
+                    $('#changeEmailError').html(errorMessage);
+                }
+            });
+        });
+    });
+</script>

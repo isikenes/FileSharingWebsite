@@ -1,0 +1,46 @@
+﻿@model LoginViewModel
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-4 col-12 mt-5">
+            <form asp-action="Login" method="post">
+                <h1 class="h3 mb-3 fw-normal">Log in</h1>
+                <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+                <div class="form-floating">
+                    <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" asp-for="Email" required>
+                    <label for="floatingInput">Email address</label>
+                </div>
+                <div class="form-floating mt-1">
+                    <input type="password" class="form-control" id="floatingPassword" placeholder="Password" asp-for="Password" required>
+                    <label for="floatingPassword">Password</label>
+                </div>
+
+                <div>
+                    <a class="text-primary fw-semibold text-decoration-none" href="@Url.Action("ForgotPassword", "Login")">Forgot your password?</p>
+                </div>
+
+                <dnt-captcha asp-captcha-generator-max="999999"
+                             asp-captcha-generator-min="111111"
+                             asp-captcha-generator-language="English"
+                             asp-captcha-generator-display-mode="ShowDigits"
+                             asp-use-relative-urls="true"
+                             asp-placeholder="Verify you are a human"
+                             asp-validation-error-message="Please enter the security code."
+                             asp-font-name="Tahoma"
+                             asp-font-size="40"
+                             asp-fore-color="#333"
+                             asp-back-color="#ccc"
+                             asp-text-box-class="text-box form-control"
+                             asp-text-box-template="<span class='input-group-prepend'><span class='form-group-text'></span></span>{0}"
+                             asp-validation-message-class="text-danger"
+                             asp-refresh-button-class="fas fa-redo btn-sm"
+                             asp-use-noise="true" />
+
+                
+
+                <button class="w-100 btn btn-lg btn-primary my-5" type="submit">Log in</button>
+
+            </form>
+        </div>
+    </div>
+</div>

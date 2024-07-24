@@ -1,0 +1,132 @@
+﻿@model Upload
+
+<div class="row">
+    <div class="text-center my-5">
+        <img src="~/img/cloud-server.png" height="160"/>
+        <div class="d-flex justify-content-center">
+            <p class="display-5"><strong>File name: </strong>@Model.FileName</p>
+            @if(ViewBag.IsOwner)
+            {
+                <button type="button" class="btn btn-warning m-2 m-md-3" data-bs-toggle="modal" data-bs-target="#changeFileNameModal">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+            }
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <p class="display-5"><strong>Description: </strong>@Model.Description</p>
+            @if (ViewBag.IsOwner)
+            {
+                <button type="button" class="btn btn-warning m-2 m-md-3" data-bs-toggle="modal" data-bs-target="#changeFileDescriptionModal">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+            }
+        </div>
+
+        <div class="mt-5">
+            <a class="btn btn-success fs-2 rounded-pill" style="width:250px; height:70px;" asp-action="Download" asp-route-file="@Model.Path" asp-route-name="@Model.FileName"><i class="fa-solid fa-download"></i> Download</a>
+        </div>
+        <div class="mt-2">
+            <p class="fs-5"><strong>Total Downloads: </strong>@Model.Counter</p>
+        </div>
+        <button id="shareButton" onclick="copyLink()" class="btn btn-primary fs-4 rounded-pill px-4 py-2 mt-4"><i class="fa-solid fa-square-share-nodes"></i> Share</button>
+        <input type="hidden" id="shareUrl" value="@Url.Action("Index", "Upload", new { path = Model.Path }, Context.Request.Scheme)" />
+
+        <div class="d-flex justify-content-center my-3">
+            <div id="shareFeedback" class="alert alert-success col-12 col-md-4" style="display: none;">
+                URL copied to clipboard!
+            </div>
+        </div>
+
+        @if(ViewBag.IsOwner)
+        {
+            <button class="btn btn-danger fs-4 rounded-pill px-4 py-2" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fa-solid fa-trash-can"></i> Delete File</button>
+
+        }
+    </div>
+
+</div>
+
+<!--Delete file modal-->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteModalLabel">Delete File</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="Upload" asp-action="DeleteUpload" method="post">
+                    <p>Are you sure you want to <strong>delete</strong> your uploaded file?</p>
+                    <input type="hidden" name="id" value="@Model.UploadId" />
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--change file name modal-->
+<div class="modal fade" id="changeFileNameModal" tabindex="-1" aria-labelledby="changeFileNameModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="changeFileNameModalLabel">Change file name</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="Upload" asp-action="ChangeUploadName" method="post">
+                    <input type="hidden" name="id" value="@Model.UploadId" />
+                    <div class="form-group mt-1 mb-4">
+                        <label for="newName">Enter new file name:</label>
+                        <input type="text" class="form-control" id="newName" name="newName" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--change file description modal-->
+<div class="modal fade" id="changeFileDescriptionModal" tabindex="-1" aria-labelledby="changeFileDescriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="changeFileDescriptionModalLabel">Change file description</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="Upload" asp-action="ChangeUploadDescription" method="post">
+                    <input type="hidden" name="id" value="@Model.UploadId" />
+                    <div class="form-group mt-1 mb-4">
+                        <label for="newName">Enter new file description:</label>
+                        <input type="text" class="form-control" id="newDescription" name="newDescription" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function copyLink() {
+            var copyText = document.getElementById("shareUrl");
+            var inputElement = document.createElement("input");
+            inputElement.value = copyText.value;
+            document.body.appendChild(inputElement);
+            inputElement.select();
+            document.execCommand("copy");
+            document.body.removeChild(inputElement);
+            
+            var feedback = document.getElementById("shareFeedback");
+            feedback.style.display = "block";
+
+        }
+    </script>
+}

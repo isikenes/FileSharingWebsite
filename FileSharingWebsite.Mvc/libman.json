@@ -1,0 +1,16 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "popper.js@2.11.8",
+      "destination": "wwwroot/lib/popper.js",
+      "files": [ "cjs/popper.js" ]
+    },
+    {
+      "library": "jquery-ajax-unobtrusive@3.2.6",
+      "destination": "wwwroot/lib/ajax",
+      "files": [ "jquery.unobtrusive-ajax.min.js" ]
+    }
+  ]
+}
